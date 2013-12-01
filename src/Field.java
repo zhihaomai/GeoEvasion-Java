@@ -29,9 +29,7 @@ public class Field extends JPanel implements ActionListener {
         super.paint(graphics);
         Graphics2D g2d = (Graphics2D) graphics.create();
         drawGrid(g2d);
-
-        orientateCraft(g2d);
-        g2d.drawImage(craft.getImage(), craft.getX()-craft.getSize()/2, craft.getY()-craft.getSize()/2, this);
+        drawCraft(graphics);
 
         g2d.dispose();
     }
@@ -43,6 +41,21 @@ public class Field extends JPanel implements ActionListener {
             int currentIncrement = i*boxSize;
             g2d.drawLine(currentIncrement, 0, currentIncrement, dimension);
             g2d.drawLine(0, currentIncrement, dimension, currentIncrement);
+        }
+    }
+
+    public void drawCraft (Graphics graphics) {
+        Graphics2D g2d = (Graphics2D) graphics;
+        drawCraftTrail(graphics);
+        orientateCraft(g2d);
+        g2d.drawImage(craft.getImage(), craft.getX()-craft.getSize()/2, craft.getY()-craft.getSize()/2, this);
+    }
+
+    public void drawCraftTrail (Graphics graphics) {
+        craft.trail.updateTrail();
+        for (int i=0; i<craft.trail.getPoints().size(); i++){
+            graphics.setColor(craft.trail.getFadeColors().get(i));
+            graphics.fillRect((int)craft.trail.getPoints().get(i).getX(), (int)craft.trail.getPoints().get(i).getY(), 1, 1);
         }
     }
 
