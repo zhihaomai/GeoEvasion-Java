@@ -1,11 +1,13 @@
 import javax.swing.JFrame;
 
 public class GeoEvasion extends JFrame {
+
     public GeoEvasion() {
-        add (new Board());
+        add (new Field());
         setTitle("GeoEvasion");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(600,600);
+        setSize(606,628); // 600x600 accounting for sides
+        setResizable(false);
         setLocationRelativeTo(null);
         setVisible(true);
     }
