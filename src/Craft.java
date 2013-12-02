@@ -8,7 +8,7 @@ public class Craft {
     public CraftTrail trail;
     private Image craftImage;
     private DIRECTION currentDirection;
-    private int x, y, dx, dy;
+    private double x, y, dx, dy;
     private Boolean pressedUp, pressedDown, pressedLeft, pressedRight;
     private final int craftSize = 25;
     private final int defaultX = 300, defaultY = 300;
@@ -45,6 +45,7 @@ public class Craft {
     }
 
     public class CraftTrail {
+
         private ArrayList<Point> points;
         private ArrayList<Color> fadeColors;
         private final double fadeSpeed = 0.98;
@@ -63,7 +64,7 @@ public class Craft {
             return this.fadeColors;
         }
 
-        public void createPoint (int x, int y) {
+        public void createPoint(int x, int y) {
             for (int i=0;i<3;i++) {
                 points.add(new Point(x  - trailSize/2 + (int)(Math.random() * trailSize), y  - trailSize/2 + (int)(Math.random() * trailSize)));
                 fadeColors.add (new Color(245, 170, 0));
@@ -79,32 +80,31 @@ public class Craft {
                 }
             }
         }
-
     }
 
     public void move() {
         if (dx > 0 && (x+dx+craftSize/2) < 600) {
-            x += dx;
-            trail.createPoint(this.x, this.y);
+            x += dx*Math.abs(Math.sin(currentDirection.getRotation()));
+            trail.createPoint((int)this.x, (int)this.y);
         } else if (dx < 0 && (x+dx-craftSize/2) > 0) {
-            x += dx;
-            trail.createPoint(this.x, this.y);
+            x += dx*Math.abs(Math.sin(currentDirection.getRotation()));
+            trail.createPoint((int)this.x, (int)this.y);
         }
 
         if (dy > 0 && (y+dy+craftSize/2) < 600) {
-            y += dy;
-            trail.createPoint(this.x, this.y);
+            y += dy*Math.abs(Math.cos(currentDirection.getRotation()));
+            trail.createPoint((int)this.x, (int)this.y);
         } else if (dy < 0 && (y+dy-craftSize/2) > 0) {
-            y += dy;
-            trail.createPoint(this.x, this.y);
+            y += dy*Math.abs(Math.cos(currentDirection.getRotation()));
+            trail.createPoint((int)this.x, (int)this.y);
         }
     }
 
-    public int getX() {
+    public double getX() {
         return x;
     }
 
-    public int getY() {
+    public double getY() {
         return y;
     }
 
