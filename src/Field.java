@@ -9,7 +9,10 @@ import java.util.ArrayList;
 
 public class Field extends JPanel implements ActionListener {
 
+    protected boolean []keys;
     private final int boxSize = 25;
+    private final long bulletDelay = 300;
+    private long lastBulletTime;
     private ArrayList<Bullet> bulletsInPlay;
     private Craft craft;
     private Timer timer;
@@ -19,11 +22,12 @@ public class Field extends JPanel implements ActionListener {
         setBackground(Color.black);
         setDoubleBuffered(true);
         addKeyListener(new Adapter());
-
+        keys = new boolean[2000];
         craft = new Craft();
         bulletsInPlay = new ArrayList<Bullet>();
         timer = new Timer(5,this);
         timer.start();
+        lastBulletTime = System.currentTimeMillis();
     }
 
     public void paint(Graphics graphics) {
@@ -32,7 +36,10 @@ public class Field extends JPanel implements ActionListener {
         drawGrid(g2d);
         drawBullets(graphics);
         drawCraft(graphics);
-
+        if (keys['Z'] && (System.currentTimeMillis() > lastBulletTime + bulletDelay)) {
+            bulletsInPlay.add(new Bullet(craft.getX(), craft.getY(), craft.getDirection()));
+            lastBulletTime = System.currentTimeMillis();
+        }
         g2d.dispose();
     }
 
@@ -87,14 +94,12 @@ public class Field extends JPanel implements ActionListener {
     private class Adapter extends KeyAdapter {
         public void keyReleased(KeyEvent e) {
             craft.keyReleased(e);
+            keys[e.getKeyCode()] = false;
         }
 
         public void keyPressed(KeyEvent e) {
-            int key = e.getKeyCode();
-            if (key == KeyEvent.VK_SPACE) {
-                bulletsInPlay.add(new Bullet(craft.getX(), craft.getY(), craft.getDirection()));
-            }
             craft.keyPressed(e);
+            keys[e.getKeyCode()] = true;
         }
     }
 }
