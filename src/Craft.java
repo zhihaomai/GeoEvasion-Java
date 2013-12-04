@@ -44,44 +44,6 @@ public class Craft {
         trail = new CraftTrail();
     }
 
-    public class CraftTrail {
-
-        private ArrayList<Point> points;
-        private ArrayList<Color> fadeColors;
-        private final double fadeSpeed = 0.98;
-        private final int trailSize = 10;
-
-        public CraftTrail() {
-            points = new ArrayList<Point>();
-            fadeColors = new ArrayList<Color>();
-        }
-
-        public ArrayList<Point> getPoints() {
-            return this.points;
-        }
-
-        public ArrayList<Color> getFadeColors() {
-            return this.fadeColors;
-        }
-
-        public void createPoint(int x, int y) {
-            for (int i=0;i<3;i++) {
-                points.add(new Point(x  - trailSize/2 + (int)(Math.random() * trailSize), y  - trailSize/2 + (int)(Math.random() * trailSize)));
-                fadeColors.add (new Color(245, 170, 0));
-            }
-        }
-
-        public void updateTrail() {
-            for (int i=0;i<points.size();i++) {
-                fadeColors.set(i, new Color((int)(fadeColors.get(i).getRed()*fadeSpeed), (int)(fadeColors.get(i).getGreen()*fadeSpeed),(int)(fadeColors.get(i).getBlue()*fadeSpeed)));
-                if (fadeColors.get(i).getRed()<=10){
-                    points.remove(i);
-                    fadeColors.remove(i);
-                }
-            }
-        }
-    }
-
     public void move() {
         if (dx > 0 && (x+dx+craftSize/2) < 600) {
             x += dx*Math.abs(Math.sin(currentDirection.getRotation()));
@@ -195,6 +157,44 @@ public class Craft {
                 dy = -1;
             } else {
                 dy = 0;
+            }
+        }
+    }
+
+    public class CraftTrail {
+
+        private ArrayList<Point> points;
+        private ArrayList<Color> fadeColors;
+        private final double fadeSpeed = 0.98;
+        private final int trailSize = 10;
+
+        public CraftTrail() {
+            points = new ArrayList<Point>();
+            fadeColors = new ArrayList<Color>();
+        }
+
+        public ArrayList<Point> getPoints() {
+            return this.points;
+        }
+
+        public ArrayList<Color> getFadeColors() {
+            return this.fadeColors;
+        }
+
+        public void createPoint(int x, int y) {
+            for (int i=0;i<3;i++) {
+                points.add(new Point(x  - trailSize/2 + (int)(Math.random() * trailSize), y  - trailSize/2 + (int)(Math.random() * trailSize)));
+                fadeColors.add (new Color(245, 170, 0));
+            }
+        }
+
+        public void updateTrail() {
+            for (int i=0;i<points.size();i++) {
+                fadeColors.set(i, new Color((int)(fadeColors.get(i).getRed()*fadeSpeed), (int)(fadeColors.get(i).getGreen()*fadeSpeed),(int)(fadeColors.get(i).getBlue()*fadeSpeed)));
+                if (fadeColors.get(i).getRed()<=10){
+                    points.remove(i);
+                    fadeColors.remove(i);
+                }
             }
         }
     }

@@ -14,6 +14,7 @@ public class Field extends JPanel implements ActionListener {
     private final long bulletDelay = 300;
     private long lastBulletTime;
     private ArrayList<Bullet> bulletsInPlay;
+    private ArrayList<Explosion> explosions;
     private Craft craft;
     private Timer timer;
 
@@ -25,6 +26,7 @@ public class Field extends JPanel implements ActionListener {
         keys = new boolean[2000];
         craft = new Craft();
         bulletsInPlay = new ArrayList<Bullet>();
+        explosions = new ArrayList<Explosion>();
         timer = new Timer(5,this);
         timer.start();
         lastBulletTime = System.currentTimeMillis();
@@ -35,6 +37,7 @@ public class Field extends JPanel implements ActionListener {
         Graphics2D g2d = (Graphics2D) graphics.create();
         drawGrid(g2d);
         drawBullets(graphics);
+        drawExplosions(graphics);
         drawCraft(graphics);
         if (keys['Z'] && (System.currentTimeMillis() > lastBulletTime + bulletDelay)) {
             bulletsInPlay.add(new Bullet(craft.getX(), craft.getY(), craft.getDirection()));
@@ -73,9 +76,20 @@ public class Field extends JPanel implements ActionListener {
             graphics.setColor(Color.red);
             bulletsInPlay.get(i).move();
             if (bulletsInPlay.get(i).getX() >= 600 || bulletsInPlay.get(i).getX() <= 0 || bulletsInPlay.get(i).getY() >= 600 || bulletsInPlay.get(i).getY() <= 0) {
+                explosions.add (new Explosion(bulletsInPlay.get(i).getX(), bulletsInPlay.get(i).getY()));
                 bulletsInPlay.remove(i);
             } else {
                 graphics.drawPolygon(bulletsInPlay.get(i).getBulletShape());
+            }
+        }
+    }
+
+    public void drawExplosions(Graphics graphics) {
+        for (int i=0;i<explosions.size();i++) {
+            if (explosions.get(i).getSparkCount() > 0) {
+                explosions.get(i).draw(graphics);
+            } else {
+                explosions.remove(i);
             }
         }
     }
