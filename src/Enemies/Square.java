@@ -2,13 +2,13 @@ package Enemies;
 
 import java.awt.*;
 
-public class Circle implements Enemy {
+public class Square implements Enemy {
 
     final private double velocity = 0.5;
-    final private int size = 10;
+    final private int size = 20;
     private double x, y;
 
-    public Circle() {
+    public Square() {
         this.x = Math.random()*xBoundary + xOffset;
         this.y = Math.random()*yBoundary + yOffset;
     }
@@ -20,7 +20,11 @@ public class Circle implements Enemy {
     }
 
     public void draw(Graphics graphics) {
-        graphics.setColor(Color.magenta);
-        graphics.drawOval((int)(this.x - size/2), (int)(this.y - size/2), size, size);
+        graphics.setColor(Color.cyan);
+        graphics.drawRect((int) (this.x - size / 2), (int) (this.y - size / 2), size, size);
+    }
+
+    public Rectangle getBounds() {
+        return new Rectangle((int) (this.x - size / 2), (int) (this.y - size / 2), size, size);
     }
 }

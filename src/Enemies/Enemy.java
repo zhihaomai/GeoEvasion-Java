@@ -12,4 +12,5 @@ public interface Enemy {
 
     public void move(double x, double y);
     public void draw(Graphics graphics);
+    public Rectangle getBounds();
 }
