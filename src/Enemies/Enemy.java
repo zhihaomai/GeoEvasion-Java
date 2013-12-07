@@ -10,7 +10,10 @@ public interface Enemy {
     final double yOffset = 10;
     final double yBoundary = 580;
 
-    public void move(double x, double y);
+    public double getX();
+    public double getY();
+    public void move(double targetX, double targetY);
     public void draw(Graphics graphics);
     public Rectangle getBounds();
+    public void adjustForCollision(Enemy enemy);
 }

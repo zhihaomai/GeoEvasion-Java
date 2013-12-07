@@ -115,6 +115,7 @@ public class Field extends JPanel implements ActionListener {
             enemies.get(i).move(craft.getX(), craft.getY());
             enemies.get(i).draw(graphics);
         }
+        detectFellowEnemyCollisions();
     }
 
     public void drawBullets(Graphics graphics) {
@@ -153,7 +154,7 @@ public class Field extends JPanel implements ActionListener {
         if (keys['Z'] && (System.currentTimeMillis() > lastBulletTime + bulletDelay)) {
             bulletsInPlay.add(new Bullet(craft.getX(), craft.getY(), craft.getDirection()));
             lastBulletTime = System.currentTimeMillis();
-        } else if (keys['Q'] && enemies.size() < 2) {
+        } else if (keys['Q'] && enemies.size() < 50) {
             enemies.add(new Square());
         }
     }
@@ -168,6 +169,16 @@ public class Field extends JPanel implements ActionListener {
                         enemies.remove(enemy);
                         break;
                     }
+                }
+            }
+        }
+    }
+
+    public void detectFellowEnemyCollisions() {
+        for (Enemy enemy1 : enemies) {
+            for (Enemy enemy2 : enemies) {
+                if (enemy1.getBounds().intersects(enemy2.getBounds())){
+                    enemy1.adjustForCollision(enemy2);
                 }
             }
         }
