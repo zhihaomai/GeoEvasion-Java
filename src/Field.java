@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
 public class Field extends JPanel implements ActionListener {
@@ -97,22 +96,11 @@ public class Field extends JPanel implements ActionListener {
     }
 
     public void drawCraft(Graphics graphics) {
-        Graphics2D g2d = (Graphics2D) graphics;
-        drawCraftTrail(graphics);
-        orientateCraft(g2d);
-        g2d.drawImage(craft.getImage(), (int)craft.getX()-craft.getSize()/2, (int)craft.getY()-craft.getSize()/2, this);
-    }
-
-    public void drawCraftTrail(Graphics graphics) {
-        craft.trail.updateTrail();
-        for (int i=0; i<craft.trail.getPoints().size(); i++){
-            graphics.setColor(craft.trail.getFadeColors().get(i));
-            graphics.fillRect((int) craft.trail.getPoints().get(i).getX(), (int) craft.trail.getPoints().get(i).getY(), 1, 1);
-        }
+        craft.draw(this, graphics);
     }
 
     public void drawEnemies(Graphics graphics) {
-        detectFellowEnemyCollisions();
+        detectEnemyCollisions();
         for (int i=0; i<enemies.size(); i++) {
             enemies.get(i).move(craft.getX(), craft.getY());
             enemies.get(i).draw(graphics);
@@ -145,12 +133,6 @@ public class Field extends JPanel implements ActionListener {
         }
     }
 
-    public void orientateCraft(Graphics2D g2d) {
-        AffineTransform at = g2d.getTransform();
-        at.rotate(craft.getDirection(), craft.getX(), craft.getY());
-        g2d.setTransform(at);
-    }
-
     public void detectNewBullets() {
         if (keys['Z'] && (System.currentTimeMillis() > lastBulletTime + bulletDelay)) {
             bulletsInPlay.add(new Bullet(craft.getX(), craft.getY(), craft.getDirection()));
@@ -167,7 +149,7 @@ public class Field extends JPanel implements ActionListener {
             if (bullet.getBulletShape().getBounds().intersects(quadrants.get(j))) {
                 for (Enemy enemy : enemyQuadrants.get(j)) {
                     if (bullet.getBulletShape().getBounds().intersects(enemy.getBounds())) {
-                        explosions.add (new Explosion(bullet.getX(), bullet.getY()));
+                        explosions.add(new Explosion(bullet.getX(), bullet.getY()));
                         bulletsInPlay.remove(bullet);
                         enemies.remove(enemy);
                         break;
@@ -177,8 +159,11 @@ public class Field extends JPanel implements ActionListener {
         }
     }
 
-    public void detectFellowEnemyCollisions() {
+    public void detectEnemyCollisions() {
         for (Enemy enemy1 : enemies) {
+            if (enemy1.getBounds().intersects(craft.getBounds())) {
+                explosions.add(new Explosion(craft.getX(), craft.getY()));
+            }
             for (Enemy enemy2 : enemies) {
                 if (enemy1.getBounds().intersects(enemy2.getBounds())){
                     enemy1.adjustForCollision(enemy2);

@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
 public class Craft {
@@ -12,6 +13,7 @@ public class Craft {
     private Boolean pressedUp, pressedDown, pressedLeft, pressedRight;
     private final int craftSize = 25;
     private final int defaultX = 300, defaultY = 300;
+    private Rectangle bounds;
 
     public enum DIRECTION {
         NORTH (0),
@@ -34,14 +36,15 @@ public class Craft {
     public Craft() {
         String imageFileName = "img/spacecraft.png";
         ImageIcon icon = new ImageIcon(this.getClass().getResource(imageFileName));
-        craftImage = icon.getImage().getScaledInstance(craftSize, craftSize, Image.SCALE_SMOOTH);
-        x = defaultX;
-        y = defaultY;
-        dx = 0;
-        dy = 0;
-        pressedDown = pressedLeft = pressedUp = pressedRight = false;
-        currentDirection = DIRECTION.NORTH;
-        trail = new CraftTrail();
+        this.craftImage = icon.getImage().getScaledInstance(craftSize, craftSize, Image.SCALE_SMOOTH);
+        this.x = defaultX;
+        this.y = defaultY;
+        this.dx = 0;
+        this.dy = 0;
+        this.pressedDown = pressedLeft = pressedUp = pressedRight = false;
+        this.currentDirection = DIRECTION.NORTH;
+        this.trail = new CraftTrail();
+        this.bounds = new Rectangle((int)this.x, (int)this.y, this.craftSize, this.craftSize);
     }
 
     public void move() {
@@ -62,6 +65,23 @@ public class Craft {
         }
     }
 
+    public void draw(Field field, Graphics graphics) {
+        Graphics2D g2d = (Graphics2D) graphics;
+        // craft tail
+        this.trail.updateTrail();
+        for (int i=0; i<this.trail.getPoints().size(); i++){
+            graphics.setColor(this.trail.getFadeColors().get(i));
+            graphics.fillRect((int) this.trail.getPoints().get(i).getX(), (int) this.trail.getPoints().get(i).getY(), 1, 1);
+        }
+        // craft itself
+        this.bounds = null;
+        this.bounds = new Rectangle((int)this.x-this.craftSize/2, (int)this.y-this.craftSize/2, this.craftSize, this.craftSize);
+        AffineTransform at = g2d.getTransform();
+        at.rotate(this.getDirection(), this.x, this.y);
+        g2d.setTransform(at);
+        g2d.drawImage(this.getImage(), (int)this.x-this.craftSize/2, (int)this.y-this.craftSize/2, field);
+    }
+
     public double getX() {
         return x;
     }
@@ -70,8 +90,8 @@ public class Craft {
         return y;
     }
 
-    public int getSize() {
-        return craftSize;
+    public Rectangle getBounds() {
+        return this.bounds;
     }
 
     public double getDirection() {
