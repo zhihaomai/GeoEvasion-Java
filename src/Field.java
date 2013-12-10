@@ -1,3 +1,4 @@
+import Enemies.Diamond;
 import Enemies.Square;
 import Enemies.Enemy;
 
@@ -111,11 +112,11 @@ public class Field extends JPanel implements ActionListener {
     }
 
     public void drawEnemies(Graphics graphics) {
+        detectFellowEnemyCollisions();
         for (int i=0; i<enemies.size(); i++) {
             enemies.get(i).move(craft.getX(), craft.getY());
             enemies.get(i).draw(graphics);
         }
-        detectFellowEnemyCollisions();
     }
 
     public void drawBullets(Graphics graphics) {
@@ -156,6 +157,8 @@ public class Field extends JPanel implements ActionListener {
             lastBulletTime = System.currentTimeMillis();
         } else if (keys['Q'] && enemies.size() < 50) {
             enemies.add(new Square());
+        } else if (keys['W'] && enemies.size() < 50) {
+            enemies.add(new Diamond());
         }
     }
 
