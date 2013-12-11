@@ -10,10 +10,11 @@ public class Craft {
     private Image craftImage;
     private DIRECTION currentDirection;
     private double x, y, dx, dy;
-    private Boolean pressedUp, pressedDown, pressedLeft, pressedRight;
+    private boolean pressedUp, pressedDown, pressedLeft, pressedRight;
     private final int craftSize = 25;
     private final int defaultX = 300, defaultY = 300;
     private Rectangle bounds;
+    private boolean alive;
 
     public enum DIRECTION {
         NORTH (0),
@@ -45,6 +46,7 @@ public class Craft {
         this.currentDirection = DIRECTION.NORTH;
         this.trail = new CraftTrail();
         this.bounds = new Rectangle((int)this.x, (int)this.y, this.craftSize, this.craftSize);
+        this.alive = true;
     }
 
     public void move() {
@@ -80,6 +82,8 @@ public class Craft {
         at.rotate(this.getDirection(), this.x, this.y);
         g2d.setTransform(at);
         g2d.drawImage(this.getImage(), (int)this.x-this.craftSize/2, (int)this.y-this.craftSize/2, field);
+        at.rotate(-this.getDirection(), this.x, this.y);
+        g2d.setTransform(at);
     }
 
     public double getX() {
@@ -88,6 +92,14 @@ public class Craft {
 
     public double getY() {
         return y;
+    }
+
+    public void kill() {
+        this.alive = false;
+    }
+
+    public boolean isAlive() {
+        return this.alive;
     }
 
     public Rectangle getBounds() {

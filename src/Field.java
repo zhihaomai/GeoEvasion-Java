@@ -13,10 +13,20 @@ import java.util.ArrayList;
 public class Field extends JPanel implements ActionListener {
 
     protected boolean []keys;
+    private enum GameState{
+        INTRO,
+        INPLAY,
+        GAMEOVER
+    }
+    private GameState gameState;
+    private int gameScore;
+    private final Font gameOverFont = new Font ("sansserif",Font.PLAIN, 32);
+    private final Font scoreTextFont = new Font ("sansserif",Font.PLAIN, 14);
     private final int boxSize = 25;
     private final int fieldWidth = 600;
     private final int fieldHeight = 600;
     private final long bulletDelay = 350;
+    private float fadeOutAmount = 0;
     private long lastBulletTime;
     private ArrayList<Bullet> bulletsInPlay;
     private ArrayList<Explosion> explosions;
@@ -34,6 +44,8 @@ public class Field extends JPanel implements ActionListener {
         setDoubleBuffered(true);
         addKeyListener(new Adapter());
         keys = new boolean[2000];
+        gameState = GameState.INTRO;
+        gameScore = 0;
         craft = new Craft();
         bulletsInPlay = new ArrayList<Bullet>();
         explosions = new ArrayList<Explosion>();
@@ -60,16 +72,21 @@ public class Field extends JPanel implements ActionListener {
 
     public void paint(Graphics graphics) {
         super.paint(graphics);
-        Graphics2D g2d = (Graphics2D) graphics.create();
-
-        populateEnemyQuadrants();
-
-        drawGrid(g2d);
-        drawBullets(graphics);
-        drawExplosions(graphics);
-        drawEnemies(graphics);
-        drawCraft(graphics);
-        g2d.dispose();
+        if (this.gameState == GameState.INTRO) {
+            this.gameState = GameState.INPLAY;
+        } else if (this.gameState == GameState.INPLAY) {
+            populateEnemyQuadrants();
+            drawGrid(graphics);
+            drawScore(graphics);
+            drawBullets(graphics);
+            drawExplosions(graphics);
+            drawEnemies(graphics);
+            drawCraft(graphics);
+            drawAnimationIfDying(graphics);
+            graphics.dispose();
+        } else if (this.gameState == GameState.GAMEOVER) {
+            drawGameOverScreen(graphics);
+        }
     }
 
     public void populateEnemyQuadrants() {
@@ -85,13 +102,13 @@ public class Field extends JPanel implements ActionListener {
         }
     }
 
-    public void drawGrid(Graphics2D g2d) {
-        g2d.setColor(Color.darkGray);
+    public void drawGrid(Graphics graphics) {
+        graphics.setColor(Color.darkGray);
         int dimension = fieldWidth;
         for (int i=1; i<=Math.ceil(dimension/boxSize); i++) {
             int currentIncrement = i*boxSize;
-            g2d.drawLine(currentIncrement, 0, currentIncrement, dimension);
-            g2d.drawLine(0, currentIncrement, dimension, currentIncrement);
+            graphics.drawLine(currentIncrement, 0, currentIncrement, dimension);
+            graphics.drawLine(0, currentIncrement, dimension, currentIncrement);
         }
     }
 
@@ -152,6 +169,7 @@ public class Field extends JPanel implements ActionListener {
                         explosions.add(new Explosion(bullet.getX(), bullet.getY()));
                         bulletsInPlay.remove(bullet);
                         enemies.remove(enemy);
+                        this.gameScore += 10;
                         break;
                     }
                 }
@@ -163,6 +181,7 @@ public class Field extends JPanel implements ActionListener {
         for (Enemy enemy1 : enemies) {
             if (enemy1.getBounds().intersects(craft.getBounds())) {
                 explosions.add(new Explosion(craft.getX(), craft.getY()));
+                craft.kill();
             }
             for (Enemy enemy2 : enemies) {
                 if (enemy1.getBounds().intersects(enemy2.getBounds())){
@@ -172,8 +191,39 @@ public class Field extends JPanel implements ActionListener {
         }
     }
 
+    public void drawAnimationIfDying(Graphics graphics) {
+        if (!craft.isAlive()) {
+            if (this.fadeOutAmount <= 0.99) {
+                this.fadeOutAmount += 0.005;
+                graphics.setColor(new Color(0, 0, 0, this.fadeOutAmount));
+            } else {
+                gameState = GameState.GAMEOVER;
+            }
+            graphics.fillRect(0, 0, getWidth(), getHeight());
+        }
+    }
+
+    public void drawScore(Graphics graphics) {
+        graphics.setColor(Color.green);
+        graphics.setFont(this.scoreTextFont);
+        graphics.drawString("SCORE:" + this.gameScore, 5, 15);
+    }
+
+    public void drawGameOverScreen(Graphics graphics) {
+        graphics.setColor(Color.black);
+        graphics.fillRect(0, 0, getWidth(), getHeight());
+        graphics.setFont(this.gameOverFont);
+        graphics.setColor(Color.red);
+        graphics.drawString("GAME OVER", 200, 260);
+        graphics.setColor(Color.green);
+        graphics.drawString("SCORE: " + this.gameScore, 200, 300);
+        timer.stop();
+    }
+
     public void actionPerformed(ActionEvent e) {
-        craft.move();
+        if (craft.isAlive()) {
+            craft.move();
+        }
         repaint();
     }
 
