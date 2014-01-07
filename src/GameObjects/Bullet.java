@@ -1,8 +1,10 @@
+package GameObjects;
+
 import java.awt.*;
 
 public class Bullet {
 
-    private final double velocity = 1.5;
+    private final double velocity = 1.8;
     private double x, y, vx, vy, radian;
     private Polygon bulletShape;
 
@@ -22,6 +24,10 @@ public class Bullet {
 
     public double getY() {
         return this.y;
+    }
+
+    public double getRadian() {
+        return this.radian;
     }
 
     public void move() {

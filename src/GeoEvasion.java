@@ -1,3 +1,5 @@
+import GameObjects.Field;
+
 import javax.swing.JFrame;
 
 public class GeoEvasion extends JFrame {
