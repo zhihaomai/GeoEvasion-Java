@@ -28,7 +28,7 @@ public class Square extends Enemy {
     }
 
     public void draw(Graphics graphics) {
-        graphics.setColor(Color.cyan);
+        graphics.setColor(Color.green);
         graphics.drawPolygon(this.shape);
     }
 

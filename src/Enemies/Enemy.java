@@ -12,7 +12,7 @@ public abstract class Enemy {
     final double enemySpawnPadding = 100;
 
     final protected double velocity = 0.5;
-    final protected int size = 20;
+    protected int size = 20;
     protected double x, y;
     protected Polygon shape;
 

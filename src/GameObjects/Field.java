@@ -1,5 +1,6 @@
 package GameObjects;
 
+import Enemies.Circle;
 import Enemies.Diamond;
 import Enemies.Square;
 import Enemies.Enemy;
@@ -165,6 +166,8 @@ public class Field extends JPanel implements ActionListener {
             enemies.add(new Square(craft.getX(), craft.getY()));
         } else if (keys['X'] && enemies.size() < 100) {
             enemies.add(new Diamond(craft.getX(), craft.getY()));
+        } else if (keys['C'] && enemies.size() < 100) {
+            enemies.add(new Circle(craft.getX(), craft.getY(), true));
         }
     }
 
@@ -181,10 +184,22 @@ public class Field extends JPanel implements ActionListener {
                     if (bulletBounds.intersects(enemy.getBounds())) {
                         explosions.add(new Explosion(bullet.getX(), bullet.getY()));
                         bulletsInPlay.remove(bullet);
+                        createChildEnemiesIfCircleEnemy(enemy);
                         enemies.remove(enemy);
                         this.gameScore += 10;
                         break;
                     }
+                }
+            }
+        }
+    }
+
+    private void createChildEnemiesIfCircleEnemy(Enemy enemy) {
+        if (enemy.getClass() == Circle.class) {
+            Circle c = (Circle) enemy;
+            if (c.isCircleAParent()) {
+                for (int i=0;i<3;i++) {
+                    enemies.add(new Circle(enemy.getX(), enemy.getY(), false));
                 }
             }
         }

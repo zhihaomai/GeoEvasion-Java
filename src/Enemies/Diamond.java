@@ -33,7 +33,7 @@ public class Diamond extends Enemy {
     }
 
     public void draw(Graphics graphics) {
-        graphics.setColor(Color.magenta);
+        graphics.setColor(Color.cyan);
         graphics.drawPolygon(this.shape);
     }
 
