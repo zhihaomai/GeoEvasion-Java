@@ -9,8 +9,8 @@ public class Bullet {
     public Bullet(double x, double y, double radian) {
         this.x = x;
         this.y = y;
-        this.vx = Math.sin(radian)*velocity;
-        this.vy = -Math.cos(radian)*velocity;
+        this.vx = Math.cos(radian)*velocity;
+        this.vy = Math.sin(radian)*velocity;
         this.radian = radian;
         bulletShape = new Polygon();
         drawShape();
@@ -38,8 +38,8 @@ public class Bullet {
         bulletShape.reset();
         double width = 5;
         double size = 20;
-        bulletShape.addPoint((int)(this.x - width/2*Math.cos(this.radian)),(int)(this.y - width/2*Math.sin(this.radian)));
-        bulletShape.addPoint((int)(this.x + width/2*Math.cos(this.radian)),(int)(this.y + width/2*Math.sin(this.radian)));
-        bulletShape.addPoint((int)(this.x + size*Math.sin(this.radian)), (int)(this.y - size*Math.cos(this.radian)));
+        bulletShape.addPoint((int)(this.x - width/2*Math.sin(this.radian)),(int)(this.y + width/2*Math.cos(this.radian)));
+        bulletShape.addPoint((int)(this.x + width/2*Math.sin(this.radian)),(int)(this.y - width/2*Math.cos(this.radian)));
+        bulletShape.addPoint((int)(this.x + size*Math.cos(this.radian)), (int)(this.y + size*Math.sin(this.radian)));
     }
 }

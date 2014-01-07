@@ -4,10 +4,7 @@ import Enemies.Enemy;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 public class Field extends JPanel implements ActionListener {
@@ -27,6 +24,7 @@ public class Field extends JPanel implements ActionListener {
     private final int fieldHeight = 600;
     private final long bulletDelay = 350;
     private float fadeOutAmount = 0;
+    private float mx, my, mousedown = 0;
     private long lastBulletTime;
     private ArrayList<Bullet> bulletsInPlay;
     private ArrayList<Explosion> explosions;
@@ -42,7 +40,9 @@ public class Field extends JPanel implements ActionListener {
         setFocusable(true);
         setBackground(Color.black);
         setDoubleBuffered(true);
-        addKeyListener(new Adapter());
+        addKeyListener(new kAdapter());
+        addMouseListener(new mAdapter());
+        addMouseMotionListener(new mAdapter());
         keys = new boolean[2000];
         gameState = GameState.INTRO;
         gameScore = 0;
@@ -151,12 +151,13 @@ public class Field extends JPanel implements ActionListener {
     }
 
     public void detectNewBullets() {
-        if (keys['Z'] && (System.currentTimeMillis() > lastBulletTime + bulletDelay)) {
-            bulletsInPlay.add(new Bullet(craft.getX(), craft.getY(), craft.getDirection()));
+        if (mousedown == 1 && (System.currentTimeMillis() > lastBulletTime + bulletDelay)) { // left-clicked
+            double direction = Math.atan2(this.my - craft.getY(), this.mx - craft.getX());
+            bulletsInPlay.add(new Bullet(craft.getX(), craft.getY(), direction));
             lastBulletTime = System.currentTimeMillis();
-        } else if (keys['Q'] && enemies.size() < 50) {
+        } else if (keys['Z'] && enemies.size() < 50) {
             enemies.add(new Square());
-        } else if (keys['W'] && enemies.size() < 50) {
+        } else if (keys['X'] && enemies.size() < 50) {
             enemies.add(new Diamond());
         }
     }
@@ -227,7 +228,7 @@ public class Field extends JPanel implements ActionListener {
         repaint();
     }
 
-    private class Adapter extends KeyAdapter {
+    private class kAdapter extends KeyAdapter {
         public void keyReleased(KeyEvent e) {
             craft.keyReleased(e);
             keys[e.getKeyCode()] = false;
@@ -236,6 +237,36 @@ public class Field extends JPanel implements ActionListener {
         public void keyPressed(KeyEvent e) {
             craft.keyPressed(e);
             keys[e.getKeyCode()] = true;
+        }
+    }
+
+    private class mAdapter extends MouseAdapter {
+        private void updateMouse(MouseEvent e) {
+            mx = e.getX();
+            my = e.getY();
+        }
+
+        public void mouseReleased(MouseEvent e) {
+            updateMouse(e);
+            mousedown = 0;
+        }
+
+        public void mouseClicked(MouseEvent e) {
+            updateMouse(e);
+            mousedown = 0;
+        }
+
+        public void mouseDragged(MouseEvent e) {
+            updateMouse(e);
+        }
+
+        public void mouseMoved(MouseEvent e) {
+            updateMouse(e);
+        }
+
+        public void mousePressed(MouseEvent e) {
+            updateMouse(e);
+            mousedown = e.getButton();
         }
     }
 }

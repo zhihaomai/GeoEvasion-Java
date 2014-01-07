@@ -139,19 +139,19 @@ public class Craft {
 
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
-        if (key == KeyEvent.VK_LEFT) {
+        if (key == KeyEvent.VK_A) {
             pressedLeft = true;
             dx = -1;
         }
-        if (key == KeyEvent.VK_RIGHT) {
+        if (key == KeyEvent.VK_D) {
             pressedRight = true;
             dx = 1;
         }
-        if (key == KeyEvent.VK_UP) {
+        if (key == KeyEvent.VK_W) {
             pressedUp = true;
             dy = -1;
         }
-        if (key == KeyEvent.VK_DOWN) {
+        if (key == KeyEvent.VK_S) {
             pressedDown = true;
             dy = 1;
         }
@@ -159,7 +159,7 @@ public class Craft {
 
     public void keyReleased(KeyEvent e) {
         int key = e.getKeyCode();
-        if (key == KeyEvent.VK_LEFT) {
+        if (key == KeyEvent.VK_A) {
             pressedLeft = false;
             if (pressedRight) {
                 dx = 1;
@@ -167,7 +167,7 @@ public class Craft {
                 dx = 0;
             }
         }
-        if (key == KeyEvent.VK_RIGHT) {
+        if (key == KeyEvent.VK_D) {
             pressedRight = false;
             if (pressedLeft) {
                 dx = -1;
@@ -175,7 +175,7 @@ public class Craft {
                 dx = 0;
             }
         }
-        if (key == KeyEvent.VK_UP) {
+        if (key == KeyEvent.VK_W) {
             pressedUp = false;
             if (pressedDown) {
                 dy = 1;
@@ -183,7 +183,7 @@ public class Craft {
                 dy = 0;
             }
         }
-        if (key == KeyEvent.VK_DOWN) {
+        if (key == KeyEvent.VK_S) {
             pressedDown = false;
             if (pressedUp) {
                 dy = -1;
