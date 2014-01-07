@@ -17,8 +17,10 @@ public class Field extends JPanel implements ActionListener {
     }
     private GameState gameState;
     private int gameScore;
+    private int lives;
     private final Font gameOverFont = new Font ("sansserif",Font.PLAIN, 32);
     private final Font scoreTextFont = new Font ("sansserif",Font.PLAIN, 14);
+    private final Font livesTextFont = new Font ("sansserif",Font.PLAIN, 14);
     private final int boxSize = 25;
     private final int fieldWidth = 600;
     private final int fieldHeight = 600;
@@ -53,6 +55,7 @@ public class Field extends JPanel implements ActionListener {
         timer = new Timer(5,this);
         timer.start();
         lastBulletTime = System.currentTimeMillis();
+        lives = 3;
 
         quadrants = new ArrayList<Rectangle>();
         enemyQuadrants = new ArrayList<ArrayList<Enemy>>();
@@ -78,6 +81,7 @@ public class Field extends JPanel implements ActionListener {
             populateEnemyQuadrants();
             drawGrid(graphics);
             drawScore(graphics);
+            drawLives(graphics);
             drawBullets(graphics);
             drawExplosions(graphics);
             drawEnemies(graphics);
@@ -198,7 +202,23 @@ public class Field extends JPanel implements ActionListener {
                 this.fadeOutAmount += 0.005;
                 graphics.setColor(new Color(0, 0, 0, this.fadeOutAmount));
             } else {
-                gameState = GameState.GAMEOVER;
+                this.bulletsInPlay.clear();
+                this.enemies.clear();
+                this.explosions.clear();
+                this.lives -= 1;
+                if (lives == 0) {
+                    gameState = GameState.GAMEOVER;
+                } else {
+                    craft.reborn();
+                    this.fadeOutAmount = 0.0f;
+                }
+
+                // cause a delay
+                try {
+                    Thread.sleep(500);
+                } catch(InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
             graphics.fillRect(0, 0, getWidth(), getHeight());
         }
@@ -208,6 +228,12 @@ public class Field extends JPanel implements ActionListener {
         graphics.setColor(Color.green);
         graphics.setFont(this.scoreTextFont);
         graphics.drawString("SCORE:" + this.gameScore, 5, 15);
+    }
+
+    public void drawLives(Graphics graphics) {
+        graphics.setColor(Color.red);
+        graphics.setFont(this.livesTextFont);
+        graphics.drawString("LIVES:" + this.lives, 545, 15);
     }
 
     public void drawGameOverScreen(Graphics graphics) {

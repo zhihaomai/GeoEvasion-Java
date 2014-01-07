@@ -98,6 +98,10 @@ public class Craft {
         this.alive = false;
     }
 
+    public void reborn() {
+        this.alive = true;
+    }
+
     public boolean isAlive() {
         return this.alive;
     }
