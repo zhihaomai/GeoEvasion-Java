@@ -1,6 +1,6 @@
 GeoEvasion-Java 
 ===============
-(Still Under Further Development)
+**(Still Under Further Development)**
 
 ![alt tag](https://raw.github.com/zhihaomai/GeoEvasion-Java/master/src/img/GeoEvasionScreenshot2.png)
 
