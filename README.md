@@ -2,11 +2,15 @@ GeoEvasion-Java
 ===============
 ![alt tag](https://raw.github.com/zhihaomai/GeoEvasion-Java/master/src/img/GeoEvasionScreenshot2.png)
 
-**(Still Under Further Development)**
-
 Game Objective
 --------------
 Achieve the highest score before your lives run out. You receive 10 points for every enemy unit you kill.
+
+Starting Game
+-------------
+- Open Command Prompt
+- Go into the out > production > GeoEvasion directory
+- Run the following command "java GeoEvasion"
 
 Controls
 --------
