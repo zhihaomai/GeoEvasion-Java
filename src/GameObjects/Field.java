@@ -1,9 +1,6 @@
 package GameObjects;
 
-import Enemies.Circle;
-import Enemies.Diamond;
-import Enemies.Square;
-import Enemies.Enemy;
+import Enemies.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -58,7 +55,7 @@ public class Field extends JPanel implements ActionListener {
         timer = new Timer(5,this);
         timer.start();
         lastBulletTime = System.currentTimeMillis();
-        lives = 100;
+        lives = 9;
 
         quadrants = new ArrayList<Rectangle>();
         enemyQuadrants = new ArrayList<ArrayList<Enemy>>();
@@ -83,13 +80,13 @@ public class Field extends JPanel implements ActionListener {
         } else if (this.gameState == GameState.INPLAY) {
             populateEnemyQuadrants();
             drawGrid(graphics);
-            drawScore(graphics);
-            drawLives(graphics);
             drawBullets(graphics);
             drawExplosions(graphics);
             drawEnemies(graphics);
             drawCraft(graphics);
             drawAnimationIfDying(graphics);
+            drawScore(graphics);
+            drawLives(graphics);
             graphics.dispose();
         } else if (this.gameState == GameState.GAMEOVER) {
             drawGameOverScreen(graphics);
@@ -144,7 +141,7 @@ public class Field extends JPanel implements ActionListener {
                 detectBulletCollision(bulletsInPlay.get(i));
             }
         }
-        detectNewBullets();
+        detectInput();
     }
 
     public void drawExplosions(Graphics graphics) {
@@ -157,17 +154,27 @@ public class Field extends JPanel implements ActionListener {
         }
     }
 
-    public void detectNewBullets() {
+    public void detectInput() {
         if (mousedown == 1 && (System.currentTimeMillis() > lastBulletTime + bulletDelay)) { // left-clicked
             double direction = Math.atan2(this.my - craft.getY(), this.mx - craft.getX());
             bulletsInPlay.add(new Bullet(craft.getX(), craft.getY(), direction));
             lastBulletTime = System.currentTimeMillis();
         } else if (keys['Z'] && enemies.size() < 100) {
             enemies.add(new Square(craft.getX(), craft.getY()));
+            keys['Z'] = false;
         } else if (keys['X'] && enemies.size() < 100) {
             enemies.add(new Diamond(craft.getX(), craft.getY()));
+            keys['X'] = false;
         } else if (keys['C'] && enemies.size() < 100) {
             enemies.add(new Circle(craft.getX(), craft.getY(), true));
+            keys['C'] = false;
+        } else if (keys['V'] && enemies.size() < 100) {
+            enemies.add(new Landmine(craft.getX(), craft.getY()));
+            keys['V'] = false;
+        }
+        if (keys[' ']) {
+            this.nukeEnemies();
+            keys[' '] = false;
         }
     }
 
@@ -182,24 +189,13 @@ public class Field extends JPanel implements ActionListener {
                         enemy.stopDodging();
                     }
                     if (bulletBounds.intersects(enemy.getBounds())) {
-                        explosions.add(new Explosion(bullet.getX(), bullet.getY()));
+                        explosions.add(new Explosion(enemy.getX(), enemy.getY()));
                         bulletsInPlay.remove(bullet);
                         createChildEnemiesIfCircleEnemy(enemy);
                         enemies.remove(enemy);
                         this.gameScore += 10;
                         break;
                     }
-                }
-            }
-        }
-    }
-
-    private void createChildEnemiesIfCircleEnemy(Enemy enemy) {
-        if (enemy.getClass() == Circle.class) {
-            Circle c = (Circle) enemy;
-            if (c.isCircleAParent()) {
-                for (int i=0;i<3;i++) {
-                    enemies.add(new Circle(enemy.getX(), enemy.getY(), false));
                 }
             }
         }
@@ -278,6 +274,25 @@ public class Field extends JPanel implements ActionListener {
             craft.move();
         }
         repaint();
+    }
+
+    private void createChildEnemiesIfCircleEnemy(Enemy enemy) {
+        if (enemy.getClass() == Circle.class) {
+            Circle c = (Circle) enemy;
+            if (c.isCircleAParent()) {
+                for (int i=0;i<3;i++) {
+                    enemies.add(new Circle(enemy.getX(), enemy.getY(), false));
+                }
+            }
+        }
+    }
+
+    private void nukeEnemies() {
+        for (Enemy enemy : enemies) {
+            explosions.add(new Explosion(enemy.getX(), enemy.getY()));
+            this.gameScore += 10;
+        }
+        enemies.clear();
     }
 
     private class kAdapter extends KeyAdapter {

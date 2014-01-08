@@ -1,6 +1,5 @@
 package Enemies;
 import java.awt.*;
-import java.awt.geom.Ellipse2D;
 
 public class Circle extends Enemy {
     private Boolean isParent;
