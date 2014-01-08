@@ -154,6 +154,58 @@ public class Field extends JPanel implements ActionListener {
         }
     }
 
+    public void drawAnimationIfDying(Graphics graphics) {
+        if (!craft.isAlive()) {
+            if (this.fadeOutAmount <= 0.99) {
+                this.fadeOutAmount += 0.005;
+                explosions.add(new Explosion(craft.getX(), craft.getY()));
+                graphics.setColor(new Color(0, 0, 0, this.fadeOutAmount));
+            } else {
+                this.bulletsInPlay.clear();
+                this.explosions.clear();
+                this.enemies.clear();
+                this.lives -= 1;
+                if (lives == 0) {
+                    gameState = GameState.GAMEOVER;
+                } else {
+                    craft.reborn();
+                    this.fadeOutAmount = 0.0f;
+                }
+
+                // cause a delay
+                try {
+                    Thread.sleep(500);
+                } catch(InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            graphics.fillRect(0, 0, getWidth(), getHeight());
+        }
+    }
+
+    public void drawScore(Graphics graphics) {
+        graphics.setColor(Color.green);
+        graphics.setFont(this.scoreTextFont);
+        graphics.drawString("SCORE:" + this.gameScore, 5, 15);
+    }
+
+    public void drawLives(Graphics graphics) {
+        graphics.setColor(Color.red);
+        graphics.setFont(this.livesTextFont);
+        graphics.drawString("LIVES:" + this.lives, 545, 15);
+    }
+
+    public void drawGameOverScreen(Graphics graphics) {
+        graphics.setColor(Color.black);
+        graphics.fillRect(0, 0, getWidth(), getHeight());
+        graphics.setFont(this.gameOverFont);
+        graphics.setColor(Color.red);
+        graphics.drawString("GAME OVER", 200, 260);
+        graphics.setColor(Color.green);
+        graphics.drawString("SCORE: " + this.gameScore, 200, 300);
+        timer.stop();
+    }
+
     public void detectInput() {
         if (mousedown == 1 && (System.currentTimeMillis() > lastBulletTime + bulletDelay)) { // left-clicked
             double direction = Math.atan2(this.my - craft.getY(), this.mx - craft.getX());
@@ -215,58 +267,6 @@ public class Field extends JPanel implements ActionListener {
                 }
             }
         }
-    }
-
-    public void drawAnimationIfDying(Graphics graphics) {
-        if (!craft.isAlive()) {
-            if (this.fadeOutAmount <= 0.99) {
-                this.fadeOutAmount += 0.005;
-                explosions.add(new Explosion(craft.getX(), craft.getY()));
-                graphics.setColor(new Color(0, 0, 0, this.fadeOutAmount));
-            } else {
-                this.bulletsInPlay.clear();
-                this.explosions.clear();
-                this.enemies.clear();
-                this.lives -= 1;
-                if (lives == 0) {
-                    gameState = GameState.GAMEOVER;
-                } else {
-                    craft.reborn();
-                    this.fadeOutAmount = 0.0f;
-                }
-
-                // cause a delay
-                try {
-                    Thread.sleep(500);
-                } catch(InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            graphics.fillRect(0, 0, getWidth(), getHeight());
-        }
-    }
-
-    public void drawScore(Graphics graphics) {
-        graphics.setColor(Color.green);
-        graphics.setFont(this.scoreTextFont);
-        graphics.drawString("SCORE:" + this.gameScore, 5, 15);
-    }
-
-    public void drawLives(Graphics graphics) {
-        graphics.setColor(Color.red);
-        graphics.setFont(this.livesTextFont);
-        graphics.drawString("LIVES:" + this.lives, 545, 15);
-    }
-
-    public void drawGameOverScreen(Graphics graphics) {
-        graphics.setColor(Color.black);
-        graphics.fillRect(0, 0, getWidth(), getHeight());
-        graphics.setFont(this.gameOverFont);
-        graphics.setColor(Color.red);
-        graphics.drawString("GAME OVER", 200, 260);
-        graphics.setColor(Color.green);
-        graphics.drawString("SCORE: " + this.gameScore, 200, 300);
-        timer.stop();
     }
 
     public void actionPerformed(ActionEvent e) {

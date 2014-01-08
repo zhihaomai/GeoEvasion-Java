@@ -101,6 +101,8 @@ public class Craft {
 
     public void reborn() {
         this.alive = true;
+        this.x = defaultX;
+        this.y = defaultY;
     }
 
     public boolean isAlive() {
